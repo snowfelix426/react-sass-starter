@@ -1,0 +1,80 @@
+$breakpoints: (
+  xs: 360px,
+  sm: 768px,
+  md: 1024px,
+  desktop: 1025px,
+  lg: 1280px,
+  xl: 1440px,
+  xxl: 1920,
+);
+
+@mixin breakpoint-up($breakpoint) {
+  // If the breakpoint exists in the map.
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Get the breakpoint value.
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    // Write the media query.
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+
+    // If the breakpoint doesn't exist in the map.
+  } @else {
+    // Log a warning.
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+@mixin breakpoint-down($breakpoint) {
+  // If the breakpoint exists in the map.
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Get the breakpoint value.
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    // Write the media query.
+    @media (max-width: ($breakpoint-value - 1)) {
+      @content;
+    }
+
+    // If the breakpoint doesn't exist in the map.
+  } @else {
+    // Log a warning.
+    @warn 'Invalid breakpoint: #{$breakpoint}.';
+  }
+}
+
+@mixin grid-container {
+  margin: 0 auto;
+  max-width: rem(1300);
+  padding-left: rem(24);
+  padding-right: rem(24);
+
+  @include breakpoint-up(xs) {
+    padding-left: rem(36);
+    padding-right: rem(36);
+  }
+  @include breakpoint-up(md) {
+    padding-left: rem(40);
+    padding-right: rem(40);
+  }
+  @include breakpoint-up(desktop) {
+    padding-left: rem(60);
+    padding-right: rem(60);
+  }
+}
+
+@function rem($pixels) {
+  @return #{$pixels/16}rem;
+}
+
+@mixin grid($mediumColumns: 1, $largeColumns: 2, $gridGap: rem(16)) {
+  display: grid;
+  gap: $gridGap;
+  @include breakpoint-up(xs) {
+    grid-template-columns: repeat($mediumColumns, 1fr);
+  }
+  @include breakpoint-up(md) {
+    grid-template-columns: repeat($largeColumns, 1fr);
+  }
+}
